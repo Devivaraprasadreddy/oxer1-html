@@ -1,0 +1,50 @@
+---
+ - name: install docker
+   hosts: remote
+   become: yes
+   tasks:
+    - name: update apt package index
+      apt:
+        update_cache: yes
+
+
+    - name: install packages to allow apt to use a repository over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+
+    - name: Add Docker's official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+
+    - name: Setup the docker stable repository
+      apt_repository:
+         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+         state: present
+
+
+    - name: update apt package index again
+      apt:
+        update_cache: yes
+
+
+    - name: Install docker
+      apt:
+        name: docker-ce
+        state: present
+
+
+    - name: ensure docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+

@@ -1,0 +1,27 @@
+---
+- name: Deploy a website in a Docker container
+  hosts: remote
+  become: yes
+
+  tasks:
+    - name: Ensure Docker is started and enabled
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull the Docker image from local
+      docker_image:
+        name: inance
+        source: pull
+
+    - name: Create and run the Docker container
+      docker_container:
+        name: my_img_cont
+        image: inance
+        state: started
+        ports:
+          - "80:80"
+        volumes:
+          - /var/lib/jenkins/workspace/aws-deploy/index.html:/home/ubuntu/project
+

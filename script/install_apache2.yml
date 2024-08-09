@@ -1,0 +1,33 @@
+---
+- name: Install and configure Apache2
+  hosts: remote
+  become: yes
+
+  tasks:
+    - name: Update the apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2
+      apt:
+        name: apache2
+        state: present
+
+    - name: Ensure Apache2 is started and enabled on boot
+      systemd:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Ensure UFW is installed
+      apt:
+        name: ufw
+        state: present
+
+    - name: Allow 'Apache Full' through UFW
+      ufw:
+        rule: allow
+        name: 'Apache Full'
+        state: enabled
+
+    
